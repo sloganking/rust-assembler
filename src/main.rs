@@ -3,12 +3,18 @@ use std::fs::File;
 
 fn main() {
 
-    // get asm string from file
-        let mut file = File::open("./input.asm").expect("Unable to open the file");
-        let mut contents = String::new();
-        file.read_to_string(&mut contents).expect("Unable to read the file");
+    // get data from files
+        // get asm string from file
+            let mut file = File::open("./input.asm").expect("Unable to open the file");
+            let mut contents = String::new();
+            file.read_to_string(&mut contents).expect("Unable to read the file");
+        // get mapping for instructions to binary
+            let mut file = File::open("./instrucToBinary.json").expect("Unable to open the file");
+            let mut instruc_to_binary_file = String::new();
+            file.read_to_string(&mut instruc_to_binary_file).expect("Unable to read the file");
+            let instruc_to_binary: serde_json::Value = serde_json::from_str(&instruc_to_binary_file).expect("JSON was not well-formatted");
     // parse fileString into tokens
-        let mut lines: Vec<&str> = contents.split("\n").collect();
+        let lines: Vec<&str> = contents.split("\n").collect();
 
         // remove comments (anything after a ";" char)
             let mut lines_no_comments = Vec::new();
@@ -36,20 +42,7 @@ fn main() {
                 let raw_tokens: Vec<Vec<String>> = emptyless_tokens.into_iter().filter(|x| x.len() != 0).collect();
                 println!("{:?}", raw_tokens);
 
-                
 
-
-
-
-
-
-        // let rawTokens: Vec<Vec<&str>> = lines_no_comments.iter().map(|x| x.split(" ")).collect();
-
-
-            
-
-        
-        // println!("{:?}",lines_no_comments);
     // turn to machine code
 
 }
