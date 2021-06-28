@@ -33,7 +33,7 @@ fn return_type(token: &str) -> Option<&str>{
         }
     }
 
-    if is_a_label(token){
+    if is_a_label(&token){
         if is_address{
             return Some("[const]")
         }else{
@@ -89,7 +89,7 @@ fn main() {
             
 
 
-    println!("{}",return_type("[A"));
+    println!("{:?}",return_type("[A"));
 
     // turn to machine code
 
