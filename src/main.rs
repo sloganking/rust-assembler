@@ -1,6 +1,50 @@
 use std::io::prelude::*;
 use std::fs::File;
 
+const REGS: [&str; 4] = ["A", "B", "C", "D"];
+
+fn is_a_label(token: &str)-> bool {
+    false
+}
+
+fn return_type(token: &str) -> Option<&str>{
+    let mut token = token.to_string();
+    let mut is_address = false;
+    if token.starts_with("[") && token.ends_with("]"){
+        is_address = true;
+        token = token.replace("[","");
+        token = token.replace("]","");
+    }
+
+    // if token represents int
+    if let Ok(i) = token.parse::<u32>(){
+        if is_address{
+            return Some("[const]")
+        }else{
+            return Some("const")
+        }
+    };
+
+    if REGS.contains(&&token[..]){
+        if is_address{
+            return Some("[reg]")
+        }else{
+            return Some("reg")
+        }
+    }
+
+    if is_a_label(token){
+        if is_address{
+            return Some("[const]")
+        }else{
+            return Some("const")
+        }
+    }
+
+    None
+
+}
+
 fn main() {
 
     // get data from files
@@ -18,7 +62,7 @@ fn main() {
 
         // remove comments (anything after a ";" char)
             let mut lines_no_comments = Vec::new();
-            for (i,line) in lines.iter().enumerate() {
+            for line in lines.into_iter() {
                 let commentless_lines = match line.find(";") {
                     Some(x) => line[0..x].to_string(),
                     None => line.to_string()
@@ -41,7 +85,11 @@ fn main() {
             // remove empty lines
                 let raw_tokens: Vec<Vec<String>> = emptyless_tokens.into_iter().filter(|x| x.len() != 0).collect();
                 println!("{:?}", raw_tokens);
+        // generate instruction mapping
+            
 
+
+    println!("{}",return_type("[A"));
 
     // turn to machine code
 
