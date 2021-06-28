@@ -4,11 +4,7 @@ use std::collections::HashMap;
 
 const REGS: [&str; 4] = ["A", "B", "C", "D"];
 
-fn is_a_label(token: &str)-> bool {
-    false
-}
-
-fn return_type(token: &str) -> Option<&str>{
+fn return_type(token: &str, label_to_address: &HashMap<String, usize>) -> Option<&'static str>{
     let mut token = token.to_string();
     let mut is_address = false;
     if token.starts_with("[") && token.ends_with("]"){
@@ -36,7 +32,7 @@ fn return_type(token: &str) -> Option<&str>{
     }
 
     // if token represents a label
-    if is_a_label(&token){
+    if label_to_address.contains_key(&token){
         if is_address{
             return Some("[const]")
         }else{
@@ -48,7 +44,7 @@ fn return_type(token: &str) -> Option<&str>{
 
 }
 
-fn tokens_to_instruc(tokens: &Vec<String>) -> Option<String>{
+fn tokens_to_instruc(tokens: &Vec<String>, label_to_address: &HashMap<String, usize>) -> Option<String>{
     let mut instruc = "".to_string();
 
     if tokens.len() <= 0{
@@ -58,10 +54,10 @@ fn tokens_to_instruc(tokens: &Vec<String>) -> Option<String>{
     instruc = instruc + &tokens[0];
 
     if tokens.len() > 1{
-        instruc = instruc + "_" + return_type(&tokens[1])?;
+        instruc = instruc + "_" + return_type(&tokens[1], label_to_address)?;
     }
     if tokens.len() > 2{
-        instruc = instruc + "_" + return_type(&tokens[2])?;
+        instruc = instruc + "_" + return_type(&tokens[2], label_to_address)?;
     }
 
     return Some(instruc);
@@ -108,14 +104,6 @@ fn main() {
                 let raw_tokens: Vec<Vec<String>> = emptyless_tokens.into_iter().filter(|x| x.len() != 0).collect();
                 println!("{:?}", raw_tokens);
 
-        // debug printing
-
-            // for tokens in &raw_tokens{
-            //     println!("{:?}", &tokens);
-            //     println!("{}", tokens_to_instruc(tokens).expect("bad tokens"));
-            // }
-
-
         // find all labels and their addresses
             let mut address = 0;
             let mut label_to_address = HashMap::new();
@@ -123,7 +111,7 @@ fn main() {
             for tokens in &raw_tokens{
                 if tokens.len() == 1 && tokens[0].ends_with(":"){
                     label_to_address.insert(
-                        tokens[0].clone(),
+                        tokens[0][0..tokens[0].len()-1].to_string(),
                         address
                     );
                 }else{
@@ -131,15 +119,43 @@ fn main() {
                 }
             }
 
-        // print table
-            // println!("{:?}",label_to_address);
+        // debug printing
+
+            for tokens in &raw_tokens{
+                println!("{:?}", &tokens);
+                println!("{}", tokens_to_instruc(tokens, &label_to_address).expect("bad tokens"));
+            }
 
         // generate instruction mapping
-            
 
+        // remove lable definitions from tokens
+            let raw_tokens: Vec<Vec<String>> = raw_tokens.into_iter().filter(|x| x[0].ends_with(":") == false).collect();
 
     // println!("{:?}",return_type("[A"));
 
     // turn tokens into machine code
+        let mut machine_code: Vec<u8> = Vec::new();
+        
 
+        for tokens in raw_tokens{
+            // find machine code for the instruction
+                let instruc_string = tokens_to_instruc(&tokens, &label_to_address).expect("tokens unable to form instruction");
+                let instruction_machine_code = instruc_to_binary.get(&instruc_string).expect("no machine code for requested instruction").as_u64().expect("ISA instruction mapped to non integer value");
+                machine_code.push(instruction_machine_code as u8);
+            // append machine code of any operands
+                for (i,token) in tokens.iter().enumerate(){
+                    // skip the first instruction which was already encoded
+                    if i != 0{
+                        // if reg, append reg value
+                            if REGS.contains(&&token[..]){
+                                machine_code.push(REGS.iter().position(|x| x == &&token[..]).expect("REG not in REGS") as u8);
+                            }
+                        // if const, append const value
+
+                        // if label, append label value
+                    }
+                }
+        }
+
+        println!("{:?}",machine_code);
 }
