@@ -1,5 +1,6 @@
 use std::io::prelude::*;
 use std::fs::File;
+use std::collections::HashMap;
 
 const REGS: [&str; 4] = ["A", "B", "C", "D"];
 
@@ -25,6 +26,7 @@ fn return_type(token: &str) -> Option<&str>{
         }
     };
 
+    // if token represents reg
     if REGS.contains(&&token[..]){
         if is_address{
             return Some("[reg]")
@@ -33,6 +35,7 @@ fn return_type(token: &str) -> Option<&str>{
         }
     }
 
+    // if token represents a label
     if is_a_label(&token){
         if is_address{
             return Some("[const]")
@@ -45,7 +48,7 @@ fn return_type(token: &str) -> Option<&str>{
 
 }
 
-fn tokens_to_instruc(tokens: Vec<String>) -> Option<String>{
+fn tokens_to_instruc(tokens: &Vec<String>) -> Option<String>{
     let mut instruc = "".to_string();
 
     if tokens.len() <= 0{
@@ -107,17 +110,36 @@ fn main() {
 
         // debug printing
 
-            for tokens in raw_tokens{
-                println!("{:?}", &tokens);
-                println!("{}", tokens_to_instruc(tokens).expect("bad tokens"));
+            // for tokens in &raw_tokens{
+            //     println!("{:?}", &tokens);
+            //     println!("{}", tokens_to_instruc(tokens).expect("bad tokens"));
+            // }
+
+
+        // find all labels and their addresses
+            let mut address = 0;
+            let mut label_to_address = HashMap::new();
+
+            for tokens in &raw_tokens{
+                if tokens.len() == 1 && tokens[0].ends_with(":"){
+                    label_to_address.insert(
+                        tokens[0].clone(),
+                        address
+                    );
+                }else{
+                    address += tokens.len()
+                }
             }
+
+        // print table
+            // println!("{:?}",label_to_address);
 
         // generate instruction mapping
             
 
 
-    println!("{:?}",return_type("[A"));
+    // println!("{:?}",return_type("[A"));
 
-    // turn to machine code
+    // turn tokens into machine code
 
 }
