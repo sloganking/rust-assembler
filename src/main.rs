@@ -28,19 +28,17 @@ fn main() {
 
 
         // tokenize 
-            // for line in lines_no_comments{
-            //     let tokens: Vec<String> = line.split(" ").collect();
-            //     let tokens: Vec<&str> = tokens.into_iter().filter(|x| x != &"").collect();
-            //     println!("{:?}", tokens);
-            //     // tokens_no_empty.push(tokens);
-            // }
+            // tokenizes but yeilds some empty string tokens
+                let mut tokens: Vec<Vec<String>> = lines_no_comments.into_iter().map(|x| x.split(" ").map(|x| x.to_string()).collect()).collect();
+            // remove empty string tokens
+                let emptyless_tokens: Vec<Vec<String>> = tokens.into_iter().map(|x| x.into_iter().filter(|x| x != "").collect()).collect();
+            // remove empty lines
+                let raw_tokens: Vec<Vec<String>> = emptyless_tokens.into_iter().filter(|x| x.len() != 0).collect();
+                println!("{:?}", raw_tokens);
 
-            let tokens: Vec<Vec<String>> = lines_no_comments.into_iter().map(|x| x.split(" ").map(|x| x.to_string()).collect()).collect();
+                
 
-            println!("{:?}", tokens)
 
-            // remove empty tokens
-                // let mut tokens_no_empty = Vec::new();
 
 
 
