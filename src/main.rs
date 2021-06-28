@@ -45,20 +45,20 @@ fn return_type(token: &str) -> Option<&str>{
 
 }
 
-fn tokens_to_instruc(tokens: Vec<&str>) -> Option<String>{
+fn tokens_to_instruc(tokens: Vec<String>) -> Option<String>{
     let mut instruc = "".to_string();
 
     if tokens.len() <= 0{
         return None;
     }
 
-    instruc = instruc + tokens[0];
+    instruc = instruc + &tokens[0];
 
     if tokens.len() > 1{
-        instruc = instruc + return_type(tokens[1])?;
+        instruc = instruc + "_" + return_type(&tokens[1])?;
     }
     if tokens.len() > 2{
-        instruc = instruc + return_type(tokens[2])?;
+        instruc = instruc + "_" + return_type(&tokens[2])?;
     }
 
     return Some(instruc);
@@ -104,6 +104,14 @@ fn main() {
             // remove empty lines
                 let raw_tokens: Vec<Vec<String>> = emptyless_tokens.into_iter().filter(|x| x.len() != 0).collect();
                 println!("{:?}", raw_tokens);
+
+        // debug printing
+
+            for tokens in raw_tokens{
+                println!("{:?}", &tokens);
+                println!("{}", tokens_to_instruc(tokens).expect("bad tokens"));
+            }
+
         // generate instruction mapping
             
 
