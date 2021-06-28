@@ -45,6 +45,25 @@ fn return_type(token: &str) -> Option<&str>{
 
 }
 
+fn tokens_to_instruc(tokens: Vec<&str>) -> Option<String>{
+    let mut instruc = "".to_string();
+
+    if tokens.len() <= 0{
+        return None;
+    }
+
+    instruc = instruc + tokens[0];
+
+    if tokens.len() > 1{
+        instruc = instruc + return_type(tokens[1])?;
+    }
+    if tokens.len() > 2{
+        instruc = instruc + return_type(tokens[2])?;
+    }
+
+    return Some(instruc);
+}
+
 fn main() {
 
     // get data from files
