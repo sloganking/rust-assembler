@@ -8,7 +8,7 @@ const REGS: [&str; 4] = ["A", "B", "C", "D"];
 fn return_type(token: &str, label_to_address: &HashMap<String, usize>) -> Option<&'static str>{
     let mut token = token.to_string();
     let mut is_address = false;
-    if token.starts_with("[") && token.ends_with("]"){
+    if token.starts_with('[') && token.ends_with(']'){
         is_address = true;
         token = token.replace("[","");
         token = token.replace("]","");
@@ -45,10 +45,10 @@ fn return_type(token: &str, label_to_address: &HashMap<String, usize>) -> Option
 
 }
 
-fn tokens_to_instruc(tokens: &Vec<String>, label_to_address: &HashMap<String, usize>) -> Option<String>{
+fn tokens_to_instruc(tokens: &[String], label_to_address: &HashMap<String, usize>) -> Option<String>{
     let mut instruc = "".to_string();
 
-    if tokens.len() <= 0{
+    if tokens.is_empty(){
         return None;
     }
 
@@ -61,7 +61,7 @@ fn tokens_to_instruc(tokens: &Vec<String>, label_to_address: &HashMap<String, us
         instruc = instruc + "_" + return_type(&tokens[2], label_to_address)?;
     }
 
-    return Some(instruc);
+    Some(instruc)
 }
 
 fn main() {
@@ -77,12 +77,12 @@ fn main() {
             file.read_to_string(&mut instruc_to_binary_file).expect("Unable to read the file");
             let instruc_to_binary: serde_json::Value = serde_json::from_str(&instruc_to_binary_file).expect("JSON was not well-formatted");
     // parse fileString into tokens
-        let lines: Vec<&str> = contents.split("\n").collect();
+        let lines: Vec<&str> = contents.split('\n').collect();
 
         // remove comments (anything after a ";" char)
             let mut lines_no_comments = Vec::new();
             for line in lines.into_iter() {
-                let commentless_lines = match line.find(";") {
+                let commentless_lines = match line.find(';') {
                     Some(x) => line[0..x].to_string(),
                     None => line.to_string()
                 };
@@ -98,11 +98,11 @@ fn main() {
 
         // tokenize 
             // tokenizes but yeilds some empty string tokens
-                let tokens: Vec<Vec<String>> = lines_no_comments.into_iter().map(|x| x.split(" ").map(|x| x.to_string()).collect()).collect();
+                let tokens: Vec<Vec<String>> = lines_no_comments.into_iter().map(|x| x.split(' ').map(|x| x.to_string()).collect()).collect();
             // remove empty string tokens
-                let emptyless_tokens: Vec<Vec<String>> = tokens.into_iter().map(|x| x.into_iter().filter(|x| x != "").collect()).collect();
+                let emptyless_tokens: Vec<Vec<String>> = tokens.into_iter().map(|x| x.into_iter().filter(|x| !x.is_empty()).collect()).collect();
             // remove empty lines
-                let raw_tokens: Vec<Vec<String>> = emptyless_tokens.into_iter().filter(|x| x.len() != 0).collect();
+                let raw_tokens: Vec<Vec<String>> = emptyless_tokens.into_iter().filter(|x| !x.is_empty()).collect();
                 // println!("{:?}", raw_tokens);
 
         // find all labels and their addresses
@@ -110,7 +110,7 @@ fn main() {
             let mut label_to_address = HashMap::new();
 
             for tokens in &raw_tokens{
-                if tokens.len() == 1 && tokens[0].ends_with(":"){
+                if tokens.len() == 1 && tokens[0].ends_with(':'){
                     label_to_address.insert(
                         tokens[0][0..tokens[0].len()-1].to_string(),
                         address
@@ -130,7 +130,7 @@ fn main() {
         // generate instruction mapping
 
         // remove lable definitions from tokens
-            let raw_tokens: Vec<Vec<String>> = raw_tokens.into_iter().filter(|x| x[0].ends_with(":") == false).collect();
+            let raw_tokens: Vec<Vec<String>> = raw_tokens.into_iter().filter(|x| !x[0].ends_with(':')).collect();
 
     // println!("{:?}",return_type("[A"));
 
