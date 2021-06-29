@@ -1,3 +1,4 @@
+use core::panic;
 use std::io::prelude::*;
 use std::fs::File;
 use std::collections::HashMap;
@@ -151,11 +152,18 @@ fn main() {
                                 machine_code.push(REGS.iter().position(|x| x == &&token[..]).expect("REG not in REGS") as u8);
                             }
                         // if const, append const value
-                            if let Ok(i) = token.parse::<i32>(){
+                            else if let Ok(i) = token.parse::<i32>(){
                                 machine_code.push(i as u8);
                             }
 
                         // if label, append label value
+                            else if label_to_address.contains_key(token){
+                                machine_code.push(*label_to_address.get(token).unwrap() as u8)
+                            }
+                        // throw error if invalid token
+                            else{
+                                panic!("operand token cannot be converted to machine code");
+                            }
                     }
                 }
         }
