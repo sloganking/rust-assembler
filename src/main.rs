@@ -64,20 +64,16 @@ fn tokens_to_instruc(tokens: &[String], label_to_address: &HashMap<String, usize
     Some(instruc)
 }
 
-fn main() {
+fn assemble(assembly_code: &str) -> Vec<u8>{
 
-    // get data from files
-        // get asm string from file
-            let mut file = File::open("./input.asm").expect("Unable to open the file");
-            let mut contents = String::new();
-            file.read_to_string(&mut contents).expect("Unable to read the file");
-        // get mapping for instructions to binary
-            let mut file = File::open("./instrucToBinary.json").expect("Unable to open the file");
-            let mut instruc_to_binary_file = String::new();
-            file.read_to_string(&mut instruc_to_binary_file).expect("Unable to read the file");
-            let instruc_to_binary: serde_json::Value = serde_json::from_str(&instruc_to_binary_file).expect("JSON was not well-formatted");
+    // get mapping for instructions to binary
+        let mut file = File::open("./instrucToBinary.json").expect("Unable to open the file");
+        let mut instruc_to_binary_file = String::new();
+        file.read_to_string(&mut instruc_to_binary_file).expect("Unable to read the file");
+        let instruc_to_binary: serde_json::Value = serde_json::from_str(&instruc_to_binary_file).expect("JSON was not well-formatted");
+    
     // parse fileString into tokens
-        let lines: Vec<&str> = contents.split('\n').collect();
+        let lines: Vec<&str> = assembly_code.split('\n').collect();
 
         // remove comments (anything after a ";" char)
             let mut lines_no_comments = Vec::new();
@@ -120,19 +116,10 @@ fn main() {
                 }
             }
 
-        // debug printing
-
-            // for tokens in &raw_tokens{
-            //     println!("{:?}", &tokens);
-            //     println!("{}", tokens_to_instruc(tokens, &label_to_address).expect("bad tokens"));
-            // }
-
         // generate instruction mapping
 
         // remove lable definitions from tokens
             let raw_tokens: Vec<Vec<String>> = raw_tokens.into_iter().filter(|x| !x[0].ends_with(':')).collect();
-
-    // println!("{:?}",return_type("[A"));
 
     // turn tokens into machine code
         let mut machine_code: Vec<u8> = Vec::new();
@@ -167,6 +154,18 @@ fn main() {
                     }
                 }
         }
+        machine_code
 
-        println!("{:?}",machine_code);
+}
+
+fn main() {
+
+    // get asm string from file
+        let mut file = File::open("./input.asm").expect("Unable to open the file");
+        let mut contents = String::new();
+        file.read_to_string(&mut contents).expect("Unable to read the file");
+       
+    let machine_code = assemble(&contents);
+    
+    println!("{:?}",machine_code);
 }
