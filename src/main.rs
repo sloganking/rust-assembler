@@ -15,7 +15,7 @@ fn return_type(token: &str, label_to_address: &HashMap<String, usize>) -> Option
     }
 
     // if token represents int
-    if let Ok(i) = token.parse::<u32>(){
+    if let Ok(_i) = token.parse::<u32>(){
         if is_address{
             return Some("[const]")
         }else{
@@ -98,12 +98,12 @@ fn main() {
 
         // tokenize 
             // tokenizes but yeilds some empty string tokens
-                let mut tokens: Vec<Vec<String>> = lines_no_comments.into_iter().map(|x| x.split(" ").map(|x| x.to_string()).collect()).collect();
+                let tokens: Vec<Vec<String>> = lines_no_comments.into_iter().map(|x| x.split(" ").map(|x| x.to_string()).collect()).collect();
             // remove empty string tokens
                 let emptyless_tokens: Vec<Vec<String>> = tokens.into_iter().map(|x| x.into_iter().filter(|x| x != "").collect()).collect();
             // remove empty lines
                 let raw_tokens: Vec<Vec<String>> = emptyless_tokens.into_iter().filter(|x| x.len() != 0).collect();
-                println!("{:?}", raw_tokens);
+                // println!("{:?}", raw_tokens);
 
         // find all labels and their addresses
             let mut address = 0;
@@ -122,10 +122,10 @@ fn main() {
 
         // debug printing
 
-            for tokens in &raw_tokens{
-                println!("{:?}", &tokens);
-                println!("{}", tokens_to_instruc(tokens, &label_to_address).expect("bad tokens"));
-            }
+            // for tokens in &raw_tokens{
+            //     println!("{:?}", &tokens);
+            //     println!("{}", tokens_to_instruc(tokens, &label_to_address).expect("bad tokens"));
+            // }
 
         // generate instruction mapping
 
