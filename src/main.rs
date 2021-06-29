@@ -151,6 +151,9 @@ fn main() {
                                 machine_code.push(REGS.iter().position(|x| x == &&token[..]).expect("REG not in REGS") as u8);
                             }
                         // if const, append const value
+                            if let Ok(i) = token.parse::<i32>(){
+                                machine_code.push(i as u8);
+                            }
 
                         // if label, append label value
                     }
