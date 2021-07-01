@@ -65,13 +65,11 @@ fn tokens_to_instruc(tokens: &[String], label_to_address: &HashMap<String, usize
 
 pub fn assemble(assembly_code: &str) -> Vec<u8>{
 
-    // get mapping for instructions to binary
-        let mut file = File::open("./instrucToBinary.json").expect("Unable to open the file");
-        let mut instruc_to_binary_file = String::new();
-        file.read_to_string(&mut instruc_to_binary_file).expect("Unable to read the file");
+    // get mapping for instructions to binary        
+        let instruc_to_binary_file = include_str!("../instrucToBinary.json");
         let instruc_to_binary: serde_json::Value = serde_json::from_str(&instruc_to_binary_file).expect("JSON was not well-formatted");
     
-    // parse fileString into tokens
+    // parse assembly_code into tokens
         let lines: Vec<&str> = assembly_code.split('\n').collect();
 
         // remove comments (anything after a ";" char)
@@ -88,7 +86,6 @@ pub fn assemble(assembly_code: &str) -> Vec<u8>{
             lines_no_comments = lines_no_comments.into_iter().map(|x| x.replace(",", "")).collect();
         // remove "\r"
             lines_no_comments = lines_no_comments.into_iter().map(|x| x.replace("\r", "")).collect();
-
 
         // tokenize 
             // tokenizes but yeilds some empty string tokens
@@ -149,5 +146,5 @@ pub fn assemble(assembly_code: &str) -> Vec<u8>{
                     }
                 }
         }
-        machine_code
+    machine_code
 }
