@@ -11,6 +11,5 @@ fn main() {
         file.read_to_string(&mut contents).expect("Unable to read the file");
        
     let machine_code = assembler::assemble(&contents);
-    
     println!("{:?}",machine_code);
 }

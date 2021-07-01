@@ -81,7 +81,6 @@ pub fn assemble(assembly_code: &str) -> Vec<u8>{
                     Some(x) => line[0..x].to_string(),
                     None => line.to_string()
                 };
-                // println!("{}",commentless_lines);
 
                 lines_no_comments.push(commentless_lines);
             }
@@ -98,7 +97,6 @@ pub fn assemble(assembly_code: &str) -> Vec<u8>{
                 let emptyless_tokens: Vec<Vec<String>> = tokens.into_iter().map(|x| x.into_iter().filter(|x| !x.is_empty()).collect()).collect();
             // remove empty lines
                 let raw_tokens: Vec<Vec<String>> = emptyless_tokens.into_iter().filter(|x| !x.is_empty()).collect();
-                // println!("{:?}", raw_tokens);
 
         // find all labels and their addresses
             let mut address = 0;
@@ -114,8 +112,6 @@ pub fn assemble(assembly_code: &str) -> Vec<u8>{
                     address += tokens.len()
                 }
             }
-
-        // generate instruction mapping
 
         // remove lable definitions from tokens
             let raw_tokens: Vec<Vec<String>> = raw_tokens.into_iter().filter(|x| !x[0].ends_with(':')).collect();
