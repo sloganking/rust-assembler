@@ -1,6 +1,6 @@
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::prelude::*;
+// use std::fs::File;
+// use std::io::prelude::*;
 
 const REGS: [&str; 4] = ["A", "B", "C", "D"];
 
@@ -39,9 +39,7 @@ fn return_type(token: &str, label_to_address: &HashMap<String, usize>) -> Option
             return Some("const")
         }
     }
-
     None
-
 }
 
 fn tokens_to_instruc(tokens: &[String], label_to_address: &HashMap<String, usize>) -> Option<String>{
