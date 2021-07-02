@@ -146,3 +146,29 @@ pub fn assemble(assembly_code: &str) -> Vec<u8>{
         }
     machine_code
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_assemble(){
+        let machine_code = super::assemble("
+            counting:
+            MOV A, 0
+            .countLoop:
+            PRINT A
+            INC A
+            CMP A, 11
+            JNC .countLoop
+        ");
+
+        let raw_bytes: Vec<u8> = [
+            3,0,0,
+            25,0,
+            8,0,
+            27,0,11,
+            14,3
+        ].to_vec();
+    
+        assert_eq!(machine_code, raw_bytes)
+    }
+}
